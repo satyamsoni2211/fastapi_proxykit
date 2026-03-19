@@ -1,9 +1,10 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.13+-3775A9?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/FastAPI-0.115+-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/pypi/v/fastapi-proxykit?style=for-the-badge&logo=pypi&logoColor=white&color=blue" alt="PyPI version" />
+  <img src="https://img.shields.io/pypi/dm/fastapi-proxykit?style=for-the-badge&color=ff69b4" alt="PyPI downloads" />
   <img src="https://img.shields.io/github/license/satyamsoni2211/fastapi_proxykit?style=for-the-badge&color=green" alt="License" />
   <img src="https://img.shields.io/github/stars/satyamsoni2211/fastapi_proxykit?style=for-the-badge&color=yellow" alt="Stars" />
-  <img src="https://img.shields.io/badge/Install%20from%20source-✓-success?style=for-the-badge" alt="Installable" />
 </p>
 
 <h1 align="center">⚡ fastapi-proxykit</h1>
@@ -11,6 +12,12 @@
 <p align="center">
   <b>Production-ready transparent proxy routes for FastAPI</b><br>
   Turn your FastAPI app into a resilient API gateway with per-route circuit breakers, OpenTelemetry observability, and automatic OpenAPI merging — zero boilerplate.
+</p>
+
+<p align="center">
+  <a href="https://pypi.org/project/fastapi-proxykit/" target="_blank">
+    <img src="https://img.shields.io/badge/Install%20with%20pip-✓-blue?style=for-the-badge&logo=pypi&logoColor=white" alt="Install with pip" />
+  </a>
 </p>
 
 <p align="center">
@@ -25,9 +32,8 @@
 
 <div align="center">
   <img src="https://via.placeholder.com/900x450/0d1117/58a6ff?text=fastapi-proxykit+in+action" alt="fastapi-proxykit architecture" width="900" />
-  <!-- Replace with real diagram later (e.g. Excalidraw: client → FastAPI → proxykit → multiple backends with traces & breakers) -->
+  <!-- Replace with real diagram (Excalidraw recommended) -->
 </div>
-
 ## ✨ Features
 
 - 🔀 **Transparent proxying** — preserve path, query params, headers automatically
@@ -43,10 +49,9 @@
 ## 🚀 Quick Start
 
 ```bash
-# Clone & install from source
-git clone https://github.com/satyamsoni2211/fastapi_proxykit.git
-cd fastapi_proxykit
-pip install .          # or: uv pip install .
+pip install fastapi-proxykit
+# or
+uv add fastapi-proxykit
 ```
 
 ```python
@@ -81,12 +86,14 @@ app.include_router(
 ## 📦 Installation
 
 ```bash
-# From source (recommended for now)
+# Recommended — from PyPI
+pip install fastapi-proxykit
+
+# Or with uv (faster)
+uv pip install fastapi-proxykit
+
+# For development / latest main
 pip install git+https://github.com/satyamsoni2211/fastapi_proxykit.git
-# or clone & install locally
-git clone https://github.com/satyamsoni2211/fastapi_proxykit.git
-cd fastapi_proxykit
-pip install .
 ```
 
 **Requirements**: Python 3.13+
