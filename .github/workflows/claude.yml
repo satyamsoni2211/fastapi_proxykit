@@ -8,7 +8,12 @@ jobs:
     environment: claude-review
     runs-on: ubuntu-latest
     env:
-      ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }} # Optional: Set if using a custom endpoint
+      ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }} # Optional: Set if using
+      ANTHROPIC_MODEL: ${{secrets.ANTHROPIC_DEFAULT_MODEL}} # Optional: Set if using
+      ANTHROPIC_SMALL_FAST_MODEL: ${{secrets.ANTHROPIC_DEFAULT_MODEL}}
+      ANTHROPIC_DEFAULT_SONNET_MODEL: ${{secrets.ANTHROPIC_DEFAULT_MODEL}}
+      ANTHROPIC_DEFAULT_OPUS_MODEL: ${{secrets.ANTHROPIC_DEFAULT_MODEL}}
+      ANTHROPIC_DEFAULT_HAIKU_MODEL: ${{secrets.ANTHROPIC_DEFAULT_MODEL}}
     permissions:
       contents: read
       pull-requests: write
