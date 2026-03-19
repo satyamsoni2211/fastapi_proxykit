@@ -1,7 +1,7 @@
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from fast_proxy import proxy_router, ProxyConfig, ProxyRoute, BreakerConfig
+from fastapi_proxykit import proxy_router, ProxyConfig, ProxyRoute, BreakerConfig
 
 @pytest.fixture
 def mock_server_with_openapi(httpserver):

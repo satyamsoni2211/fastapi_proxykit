@@ -14,11 +14,11 @@ Run with: python -m uvicorn examples.api_gateway.main:app --port 8000
 import sys
 from pathlib import Path
 
-# Allow importing fast_proxy from source
+# Allow importing fastapi_proxykit from source
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from fastapi import FastAPI
-from fast_proxy import proxy_router, ProxyConfig, ProxyRoute, BreakerConfig
+from fastapi_proxykit import proxy_router, ProxyConfig, ProxyRoute, BreakerConfig
 
 
 def create_app(target_base_url: str) -> FastAPI:

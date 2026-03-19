@@ -1,5 +1,5 @@
 import pytest
-from fast_proxy.openapi import fetch_target_openapi, merge_openapi_schemas
+from fastapi_proxykit.openapi import fetch_target_openapi, merge_openapi_schemas
 
 @pytest.mark.asyncio
 async def test_fetch_target_openapi_success(httpserver):

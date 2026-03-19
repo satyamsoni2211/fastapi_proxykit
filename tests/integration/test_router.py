@@ -1,7 +1,7 @@
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from fast_proxy import proxy_router, ProxyConfig, ProxyRoute, BreakerConfig
+from fastapi_proxykit import proxy_router, ProxyConfig, ProxyRoute, BreakerConfig
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def test_observability_tracer_receives_spans(app, mock_server):
     mock_span = MagicMock()
     mock_tracer.start_span.return_value = mock_span
 
-    from fast_proxy.models import ObservabilityConfig
+    from fastapi_proxykit.models import ObservabilityConfig
     config = ProxyConfig(
         routes=[
             ProxyRoute(
@@ -49,7 +49,7 @@ def test_observability_tracer_receives_spans(app, mock_server):
         observability=ObservabilityConfig(tracer=mock_tracer),
     )
 
-    from fast_proxy import proxy_router
+    from fastapi_proxykit import proxy_router
     from fastapi import FastAPI
     test_app = FastAPI()
     test_app.include_router(proxy_router(config))

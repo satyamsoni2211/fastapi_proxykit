@@ -1,4 +1,4 @@
-# fast-proxy
+# fastapi-proxykit
 
 **A production-ready FastAPI plugin that adds transparent HTTP proxy capabilities to any existing application.**
 
@@ -12,7 +12,7 @@ Built with non-blocking I/O, per-route circuit breakers, and full OpenTelemetry 
 
 ```python
 from fastapi import FastAPI
-from fast_proxy import proxy_router, ProxyConfig, ProxyRoute, BreakerConfig
+from fastapi_proxykit import proxy_router, ProxyConfig, ProxyRoute, BreakerConfig
 
 app = FastAPI()
 
@@ -88,7 +88,7 @@ Use `fast-proxy` when you need to:
 ### Configuration
 
 ```python
-from fast_proxy import (
+from fastapi_proxykit import (
     ProxyConfig,
     ProxyRoute,
     ProxyErrorResponse,
@@ -229,7 +229,7 @@ Metrics emitted:
 ## Project layout
 
 ```
-src/fast_proxy/
+src/fastapi_proxykit/
 ├── __init__.py     # Public exports
 ├── models.py       # Pydantic config models
 ├── errors.py       # ProxyErrorResponse

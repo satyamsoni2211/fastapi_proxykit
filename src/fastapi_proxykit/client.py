@@ -1,7 +1,7 @@
 import httpx
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 
-from fast_proxy.models import ClientConfig
+from fastapi_proxykit.models import ClientConfig
 
 
 def create_http_client(config: ClientConfig, tracer_provider=None) -> httpx.AsyncClient:

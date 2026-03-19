@@ -1,5 +1,5 @@
 import pytest
-from fast_proxy.models import ProxyRoute, BreakerConfig
+from fastapi_proxykit.models import ProxyRoute, BreakerConfig
 
 def test_proxy_route_has_openapi_fields():
     route = ProxyRoute(

@@ -2,7 +2,7 @@ import functools
 
 import pybreaker
 
-from fast_proxy.models import BreakerConfig
+from fastapi_proxykit.models import BreakerConfig
 
 
 @functools.lru_cache(maxsize=None)

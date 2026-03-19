@@ -1,6 +1,6 @@
 import pytest
-from fast_proxy.client import create_http_client
-from fast_proxy.models import ClientConfig
+from fastapi_proxykit.client import create_http_client
+from fastapi_proxykit.models import ClientConfig
 
 
 class TestCreateHttpClient:

@@ -8,11 +8,11 @@ import structlog
 from opentelemetry.trace import StatusCode
 from opentelemetry import metrics
 
-from fast_proxy.models import ProxyConfig, ProxyRoute
-from fast_proxy.breaker import create_breaker
-from fast_proxy.client import create_http_client
-from fast_proxy.errors import ProxyErrorResponse
-from fast_proxy.openapi import fetch_target_openapi, merge_openapi_schemas
+from fastapi_proxykit.models import ProxyConfig, ProxyRoute
+from fastapi_proxykit.breaker import create_breaker
+from fastapi_proxykit.client import create_http_client
+from fastapi_proxykit.errors import ProxyErrorResponse
+from fastapi_proxykit.openapi import fetch_target_openapi, merge_openapi_schemas
 
 
 def proxy_router(config: ProxyConfig) -> APIRouter:

@@ -14,7 +14,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from fastapi import FastAPI
-from fast_proxy import proxy_router, ProxyConfig, ProxyRoute, BreakerConfig, ClientConfig
+from fastapi_proxykit import proxy_router, ProxyConfig, ProxyRoute, BreakerConfig, ClientConfig
 
 
 def create_app(legacy_base_url: str) -> FastAPI:

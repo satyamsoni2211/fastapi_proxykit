@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
-from fast_proxy.breaker import create_breaker
-from fast_proxy.models import BreakerConfig
+from fastapi_proxykit.breaker import create_breaker
+from fastapi_proxykit.models import BreakerConfig
 
 
 class TestCreateBreaker:

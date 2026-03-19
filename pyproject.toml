@@ -1,5 +1,5 @@
 [project]
-name = "fast-proxy"
+name = "fastapi-proxykit"
 version = "0.1.0"
 description = "A production-ready FastAPI plugin for transparent HTTP proxying with per-route circuit breakers and OpenTelemetry observability."
 readme = "README.md"
