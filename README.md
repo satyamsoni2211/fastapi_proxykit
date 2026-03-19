@@ -202,6 +202,36 @@ Many FastAPI developers end up reinventing 80% of this themselves. With proxykit
 | Custom tracing boilerplate                | Automatic OpenTelemetry spans & metrics        |
 | Risk of blocking I/O                      | Fully async + pooled connections               |
 
+## 🤖 Claude Code CI (Manual GitHub App Setup)
+
+This repo uses [Claude Code](https://docs.anthropic.com/en/docs/claude-code) for AI-powered code reviews and issue assistance via a custom GitHub App.
+
+### One-time setup (repo admin)
+
+**1. Create a GitHub App** at `https://github.com/settings/apps`
+
+- Name: `fastapi-proxykit` (or any name)
+- Homepage URL: `https://github.com/satyamsoni2211/fastapi_proxykit`
+- Repository permissions:
+  - Contents: **Read & Write**
+  - Issues: **Read & Write**
+  - Pull requests: **Read & Write**
+- Account permissions: none required
+- Install on: this repository only
+
+**2. Generate a private key** on the app settings page and download the `.pem` file.
+
+**3. Add repository secrets** (`Settings → Secrets and variables → Actions`):
+
+| Secret name | Value |
+|---|---|
+| `APP_ID` | App ID from the app settings page |
+| `APP_PRIVATE_KEY` | Paste entire contents of the `.pem` file |
+| `ANTHROPIC_API_KEY` | Your Anthropic API key |
+
+> [!NOTE]
+> The workflow [`.github/workflows/claude.yml`](./.github/workflows/claude.yml) will respond to `/` commands in PRs and issues once the app is installed and secrets are configured.
+
 ## Contributing
 
 Contributions welcome!  
