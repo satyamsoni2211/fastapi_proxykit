@@ -1,14 +1,53 @@
-# fastapi-proxykit
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.13+-3775A9?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/FastAPI-0.115+-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/github/license/satyamsoni2211/fastapi_proxykit?style=for-the-badge&color=green" alt="License" />
+  <img src="https://img.shields.io/github/stars/satyamsoni2211/fastapi_proxykit?style=for-the-badge&color=yellow" alt="Stars" />
+  <img src="https://img.shields.io/badge/Install%20from%20source-✓-success?style=for-the-badge" alt="Installable" />
+</p>
 
-**A production-ready FastAPI plugin that adds transparent HTTP proxy capabilities to any existing application.**
+<h1 align="center">⚡ fastapi-proxykit</h1>
 
-Built with non-blocking I/O, per-route circuit breakers, and full OpenTelemetry observability.
+<p align="center">
+  <b>Production-ready transparent proxy routes for FastAPI</b><br>
+  Turn your FastAPI app into a resilient API gateway with per-route circuit breakers, OpenTelemetry observability, and automatic OpenAPI merging — zero boilerplate.
+</p>
 
----
+<p align="center">
+  <a href="#-features">Features</a> •
+  <a href="#-quick-start">Quick Start</a> •
+  <a href="#-installation">Installation</a> •
+  <a href="#-configuration">Configuration</a> •
+  <a href="#-examples">Examples</a> •
+  <a href="#-why-use-it">Why?</a> •
+  <a href="#-license">License</a>
+</p>
 
-## What
+<div align="center">
+  <img src="https://via.placeholder.com/900x450/0d1117/58a6ff?text=fastapi-proxykit+in+action" alt="fastapi-proxykit architecture" width="900" />
+  <!-- Replace with real diagram later (e.g. Excalidraw: client → FastAPI → proxykit → multiple backends with traces & breakers) -->
+</div>
 
-`fast-proxy` is a library you drop into an existing FastAPI application. Register it with a configuration object, and it proxies incoming HTTP requests to any target service — preserving path, query, and headers transparently.
+## ✨ Features
+
+- 🔀 **Transparent proxying** — preserve path, query params, headers automatically
+- 🛡️ **Per-route circuit breakers** — isolated resilience with `pybreaker` (no cascading failures)
+- 📊 **Full OpenTelemetry support** — tracing, metrics, custom tracer/meter injection
+- 📖 **Automatic OpenAPI merging** — unified `/docs` from all backend services
+- ⚡ **Non-blocking I/O** — `httpx.AsyncClient` with pooling & configurable limits
+- 🧩 **Declarative config** — clean Pydantic-powered routes & settings
+- 🛠 **Structured errors** — consistent JSON responses (503 breaker open, 504 timeout, etc.)
+- 🔌 **Lifespan-aware** — client auto cleanup on shutdown
+- 🆓 **Zero external agents** required for observability
+
+## 🚀 Quick Start
+
+```bash
+# Clone & install from source
+git clone https://github.com/satyamsoni2211/fastapi_proxykit.git
+cd fastapi_proxykit
+pip install .          # or: uv pip install .
+```
 
 ```python
 from fastapi import FastAPI
@@ -26,290 +65,157 @@ app.include_router(
                     breaker=BreakerConfig(failure_threshold=5, timeout=30),
                     strip_prefix=True,
                 ),
+                ProxyRoute(
+                    path_prefix="/api/orders",
+                    target_base_url="https://orders.example.com",
+                    breaker=BreakerConfig(failure_threshold=3, timeout=15),
+                ),
             ]
         )
     )
 )
 ```
 
-A request to `GET /api/users/123` → `GET https://users.example.com/123`.
+→ `GET /api/users/42` proxies to `https://users.example.com/42`
 
----
-
-## Why
-
-Every non-trivial system needs to proxy requests — microservices behind an API gateway, legacy systems exposed through a modern facade, testing environments forwarding to live backends.
-
-Building a proxy from scratch means solving the same problems every time:
-
-- **Resilience** — When a downstream service is down, you don't want to hammer it with retries or let failures cascade.
-- **Observability** — You can't debug what you can't see. Tracing, metrics, and structured logs are not optional.
-- **Non-blocking I/O** — Proxying synchronously in a web server blocks threads and limits concurrency.
-
-`fast-proxy` solves these once and gives you a reusable, configurable component instead.
-
----
-
-## Who
-
-- **Backend developers** building API gateways or reverse proxies in FastAPI
-- **Platform/infra engineers** adding proxy routing to existing services
-- **Teams migrating architectures** that need to route requests to multiple backend services while maintaining a single API surface
-
----
-
-## Where
-
-Install from source:
+## 📦 Installation
 
 ```bash
+# From source (recommended for now)
+pip install git+https://github.com/satyamsoni2211/fastapi_proxykit.git
+# or clone & install locally
+git clone https://github.com/satyamsoni2211/fastapi_proxykit.git
+cd fastapi_proxykit
 pip install .
-# or with uv
-uv pip install .
 ```
 
-Requires **Python 3.13+**.
+**Requirements**: Python 3.13+
 
----
+## ⚙️ Configuration
 
-## When
-
-Use `fast-proxy` when you need to:
-
-- Route requests to one or more target services from a FastAPI app
-- Protect downstream services with circuit breakers that open after repeated failures
-- Get full observability into proxy traffic (traces, metrics, structured logs)
-- Forward requests transparently without re-implementing HTTP client logic
-
----
-
-## How
-
-### Configuration
+Full power via `ProxyConfig`:
 
 ```python
-from fastapi_proxykit import (
-    ProxyConfig,
-    ProxyRoute,
-    ProxyErrorResponse,
-    BreakerConfig,
-    ObservabilityConfig,
-    ClientConfig,
-)
+from fastapi_proxykit import ProxyConfig, ProxyRoute, BreakerConfig, ObservabilityConfig, ClientConfig
 
 config = ProxyConfig(
-    # One or more routes — longest-prefix match is used
     routes=[
         ProxyRoute(
-            path_prefix="/api/users",          # Route prefix to match
-            target_base_url="https://users.example.com",  # Target base URL
-            breaker=BreakerConfig(
-                failure_threshold=5,          # Failures before opening circuit
-                timeout=30,                    # Seconds before transitioning to half-open
-            ),
-            strip_prefix=True,                 # Strip /api/users from forwarded path
-            openapi_url=None,                  # Override target's OpenAPI URL (optional)
-            include_in_openapi=True,           # Include target's paths in merged /docs
+            path_prefix="/api/v1/users",
+            target_base_url="https://users-service.internal",
+            strip_prefix=True,
+            breaker=BreakerConfig(failure_threshold=5, timeout=30),
+            include_in_openapi=True,
         ),
+        # ... more routes
     ],
-    # Observability — inject your own OTel handles
     observability=ObservabilityConfig(
-        tracer=your_tracer,       # OpenTelemetry tracer (optional)
-        meter=your_meter,         # OpenTelemetry meter (optional)
-        logger=your_logger,       # structlog or stdlib logger (optional)
+        tracer=your_tracer,   # opentelemetry trace.get_tracer()
+        meter=your_meter,     # opentelemetry metrics.get_meter()
+        logger=your_logger,   # optional structlog / logging
     ),
-    # HTTP client settings
     client=ClientConfig(
-        timeout=10.0,             # Request timeout in seconds
-        max_connections=100,      # Max concurrent connections
+        timeout=15.0,
+        max_connections=200,
     ),
 )
 ```
 
-### Registering the router
+### Unified OpenAPI (recommended)
 
 ```python
-from fastapi import FastAPI
-
-app = FastAPI()
+app = FastAPI(openapi_url=None, docs_url=None, redoc_url=None)
 app.include_router(proxy_router(config))
 ```
 
-All requests matching a configured `path_prefix` are proxied. Requests matching no prefix return `404`.
+→ All backend OpenAPI specs merged at `/docs` with prefixed paths.
 
-### Merged OpenAPI documentation
+## 📚 Examples
 
-When a target service exposes an OpenAPI spec at `{target_base_url}/openapi.json`, `fast-proxy` can merge those paths into its own `/docs` endpoint so all routes appear in a single Swagger UI.
+See the [`examples/`](./examples) folder:
 
-For each route with `include_in_openapi=True` (the default), the proxy fetches the target's `/openapi.json` and prefixes all its paths with the route's `path_prefix`:
+- `api_gateway/` — Multi-service gateway with different breaker settings
+- `legacy_facade/` — Modern prefix for legacy backend
+- `multi_env/` — Route to dev/staging/prod based on env
 
-| Target path | Merged path |
-|---|---|
-| `/users` | `/api/users` |
-| `/users/{id}` | `/api/users/{id}` |
-
-To use this feature, disable FastAPI's default docs when creating your app:
-
-```python
-from fastapi import FastAPI
-
-app = FastAPI(
-    openapi_url=None,   # Disable default OpenAPI
-    docs_url=None,
-    redoc_url=None,
-)
-app.include_router(proxy_router(config))
-```
-
-Then visit `/docs` to see all merged routes, or `/openapi.json` for the raw merged spec.
-
-### OpenTelemetry integration
-
-`tracer` and `meter` are injected from the host application's OTel setup, giving you full control over the export pipeline:
-
-```python
-from opentelemetry import trace, metrics
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.metrics import MeterProvider
-
-trace.set_tracer_provider(TracerProvider())
-metrics.set_meter_provider(MeterProvider())
-
-tracer = trace.get_tracer(__name__)
-meter = metrics.get_meter(__name__)
-
-config = ProxyConfig(
-    routes=[...],
-    observability=ObservabilityConfig(tracer=tracer, meter=meter),
-)
-```
-
-### Error responses
-
-When the circuit breaker opens or a downstream service is unreachable, `fast-proxy` returns structured JSON:
-
-```json
-{
-  "error": "circuit_breaker_open",
-  "message": "Target service unavailable",
-  "route": "/api/users"
-}
-```
-
-| Condition | Status | Error code |
-|---|---|---|
-| Circuit breaker open | 503 | `circuit_breaker_open` |
-| Request timeout | 504 | `timeout` |
-| Connection error | 503 | `connection_error` |
-
----
-
-## Design decisions
-
-### Circuit breakers per route
-
-Each `ProxyRoute` gets its own `pybreaker.CircuitBreaker` instance. Failures are counted per route — a failure on `/api/users` never trips the breaker for `/api/orders`.
-
-Breakers are cached by `(route_name, failure_threshold, timeout)` so repeated calls with the same config return the same instance, preserving failure state across requests.
-
-### Non-blocking HTTP
-
-All outbound requests use `httpx.AsyncClient` — fully async, connection-pooled, with configurable limits. The client is created once and closed cleanly on application shutdown via a FastAPI lifespan handler.
-
-### Observability is optional
-
-`tracer`, `meter`, and `logger` are all optional. If not provided, the proxy runs without instrumentation. If provided, every request gets a span with `route`, `target_url`, `http.status_code`, and full exception recording.
-
-Metrics emitted:
-- `proxy.requests` (counter) — `route`, `status`
-- `proxy.request.duration` (histogram) — `route`
-
----
-
-## Project layout
-
-```
-src/fastapi_proxykit/
-├── __init__.py     # Public exports
-├── models.py       # Pydantic config models
-├── errors.py       # ProxyErrorResponse
-├── breaker.py      # Per-route circuit breaker factory (cached)
-├── client.py       # Shared httpx.AsyncClient factory
-├── openapi.py      # Target OpenAPI spec fetch and merge
-└── router.py       # FastAPI APIRouter + proxy handler
-
-examples/
-├── api_gateway/     # Multi-service gateway with per-route breakers
-├── legacy_facade/  # Wrapping a legacy service behind a modern prefix
-└── multi_env/      # Routing to dev/staging/prod environments
-```
-
----
-
-## Examples
-
-Run any example with `uv run python -m uvicorn examples.<name>.main:app --port 8000`.
-
-### API Gateway (`examples/api_gateway/`)
-
-A FastAPI app acting as an API gateway routing to three backend services — users, orders, and products — each with its own circuit breaker config:
-
-```python
-from examples.api_gateway.main import create_app
-
-app = create_app(target_base_url="https://api.example.com")
-```
-
-Routes: `/api/users` → users service, `/api/orders` → orders service, `/api/products` → products service. Each has different `failure_threshold` and `timeout` values.
-
-### Legacy Facade (`examples/legacy_facade/`)
-
-A single route wrapping a legacy service behind a modern prefix, with a longer timeout:
-
-```python
-from examples.legacy_facade.main import create_app
-
-app = create_app(legacy_base_url="https://legacy.internal.com")
-```
-
-Route: `/legacy/v1/*` → `https://legacy.internal.com/api/*` (strip_prefix=True). Useful for migrating from legacy systems while maintaining backwards-compatible URLs.
-
-### Multi-Environment (`examples/multi_env/`)
-
-Routing to different environments (dev/staging/prod) based on path prefix:
-
-```python
-from examples.multi_env.main import create_app
-
-app = create_app(
-    dev_url="https://dev-backend.example.com",
-    staging_url="https://staging-backend.example.com",
-    prod_url="https://prod-backend.example.com",
-)
-```
-
-Routes: `/dev/api/*` → dev, `/staging/api/*` → staging, `/api/*` → prod (default).
-
----
-
-## Testing
-
+Run any example:
 ```bash
-pytest tests/ -v
+uv run python -m uvicorn examples.api_gateway.main:app --reload --port 8000
 ```
 
-Unit tests cover:
-- `models.py` — Pydantic validation (including new `openapi_url`, `include_in_openapi` fields)
-- `breaker.py` — circuit breaker creation and caching
-- `client.py` — HTTP client factory
-- `openapi.py` — OpenAPI spec fetch and merge
+## 🤔 Why fastapi-proxykit? — Real Developer Benefits
 
-Integration tests use `pytest-httpserver` to verify end-to-end request passthrough and OpenAPI merge with a real mock server.
+Building proxy/routing logic in FastAPI often means repeating the same boilerplate — manual `httpx` calls, error handling, timeouts, resilience patterns, tracing, and fragmented docs. **fastapi-proxykit** eliminates this repetition with a **single, configurable, production-grade component**.
 
-Example tests in `examples/*/test_example.py` verify routing behavior against mock backends.
+Here's how it directly benefits you as a developer:
+
+- **Save hours (or days) of repetitive coding**  
+  Instead of hand-writing proxy endpoints for every backend service (with custom path handling, headers forwarding, timeouts, etc.), you define routes declaratively once via `ProxyRoute`. Drop it in with `app.include_router(proxy_router(config))` — instant transparent proxying. No more duplicating `async def proxy_xxx(...)` functions.
+
+- **Prevent cascading failures & protect your backends**  
+  Per-route circuit breakers (`pybreaker`) isolate failures: if `/api/users` backend flakes out (e.g., 5 failures in a row), that route "opens" automatically — returning fast 503s instead of hanging clients or hammering the failing service. Other routes (e.g., `/api/orders`) keep working normally. This is huge for microservices/gateway patterns — no more "one slow service kills the whole app".
+
+- **Debug & monitor like a pro — zero extra instrumentation**  
+  Full OpenTelemetry integration (traces, metrics, optional structured logs) out-of-the-box. Inject your existing tracer/meter/logger — every proxied request gets spans with target URL, status, duration, errors, etc.  
+  → Quickly spot slow backends, high-latency routes, error spikes, or retry storms in production. No manual `@tracer.start_as_current_span()` everywhere.
+
+- **Unified Swagger/OpenAPI docs — one `/docs` to rule them all**  
+  Automatically fetches each backend's `/openapi.json`, prefixes paths (e.g., `/api/users/*` → shows as `/api/users/...` in UI), and merges into your app's docs.  
+  → Developers/consumers see a single, complete API surface instead of jumping between 5+ service docs. Great for internal APIs, partner integrations, or self-documenting gateways.
+
+- **Scale confidently with non-blocking, pooled I/O**  
+  Uses `httpx.AsyncClient` under the hood with configurable connection limits, timeouts, and pooling. Fully async — no thread blocking, supports high concurrency without spiking CPU/memory.  
+  → Your gateway stays responsive even under heavy load or when proxying many slow backends.
+
+- **Consistent, client-friendly errors — no ugly 502s**  
+  Structured JSON responses for failures:  
+  ```json
+  {"error": "circuit_breaker_open", "message": "Target service temporarily unavailable"}
+  ```  
+  or 504 on timeout. Easy for frontend/mobile clients to handle gracefully.
+
+- **Clean separation for complex architectures**  
+  Ideal for:  
+  - **Microservices gateway** — route `/users`, `/orders`, `/payments` to isolated services with different resilience rules  
+  - **Legacy modernization** — facade old APIs behind modern prefixes without rewriting clients  
+  - **Multi-env routing** — `/dev/*` → dev cluster, `/prod/*` → production  
+  - **Observability-first teams** — plug into existing OTEL collectors (Jaeger, Zipkin, Prometheus, etc.) without changing code
+
+In short: **fastapi-proxykit** turns painful, error-prone proxy boilerplate into a **declarative, resilient, observable feature** — letting you focus on business logic instead of infrastructure plumbing.
+
+Many FastAPI developers end up reinventing 80% of this themselves. With proxykit, you get it right the first time — resilient, observable, and maintainable.
+
+
+
+| Without proxykit                          | With fastapi-proxykit                          |
+|-------------------------------------------|------------------------------------------------|
+| Manual httpx per endpoint                 | One config → all routes                        |
+| No resilience → cascading failures        | Per-route circuit breakers                     |
+| Fragmented /docs per service              | Merged, prefixed OpenAPI in single UI          |
+| Custom tracing boilerplate                | Automatic OpenTelemetry spans & metrics        |
+| Risk of blocking I/O                      | Fully async + pooled connections               |
+
+## Contributing
+
+Contributions welcome!  
+1. Fork the repo  
+2. Create feature branch (`git checkout -b feature/amazing-thing`)  
+3. Commit (`git commit -m 'Add amazing thing'`)  
+4. Push & open PR
+
+## 📄 License
+
+MIT License — see [`LICENSE`](./LICENSE)
 
 ---
 
-## License
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/satyamsoni2211">Satyam Soni</a> •
+  <a href="https://x.com/_satyamsoni_">@_satyamsoni_</a>
+</p>
 
-MIT License. See [LICENSE](LICENSE) for full text.
+<p align="center">
+  <a href="https://github.com/satyamsoni2211/fastapi_proxykit/issues/new?labels=enhancement&title=Feature+request">Suggest Feature</a>
+  ·
+  <a href="https://github.com/satyamsoni2211/fastapi_proxykit/issues/new?labels=bug&title=Bug">Report Bug</a>
+</p>
