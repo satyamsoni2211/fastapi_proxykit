@@ -7,6 +7,8 @@ jobs:
   review:
     environment: claude-review
     runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }} # Optional: Set if using a custom endpoint
     permissions:
       contents: read
       pull-requests: write
