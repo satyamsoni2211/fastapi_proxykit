@@ -76,6 +76,9 @@ app.include_router(
                     breaker=BreakerConfig(failure_threshold=3, timeout=15),
                 ),
             ]
+
+
+            adsdasdasd
         )
     )
 )
