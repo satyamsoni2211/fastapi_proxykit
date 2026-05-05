@@ -1,6 +1,6 @@
 [project]
 name = "fastapi-proxykit"
-version = "0.1.0"
+version = "0.1.1"
 description = "A production-ready FastAPI plugin for transparent HTTP proxying with per-route circuit breakers and OpenTelemetry observability."
 readme = "README.md"
 license = {text = "MIT"}
@@ -8,15 +8,11 @@ authors = [
     { name = "Satyam Soni", email = "satyam_soni1@epam.com" }
 ]
 requires-python = ">=3.13"
-keywords = ["fastapi", "proxy", "http-proxy", "circuit-breaker", "opentelemetry", "resilience"]
+keywords = ["fastapi", "proxy", "api-gateway", "circuit-breaker", "opentelemetry", "reverse-proxy", "httpx"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Framework :: FastAPI",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: System :: Networking",
+  "Framework :: FastAPI",
+  "Topic :: Internet :: Proxy Servers",
+  "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
     "fastapi>=0.135.1",
