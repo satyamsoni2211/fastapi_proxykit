@@ -31,7 +31,7 @@
 </p>
 
 <div align="center">
-  <img src="https://via.placeholder.com/900x450/0d1117/58a6ff?text=fastapi-proxykit+in+action" alt="fastapi-proxykit architecture" width="900" />
+  <img src="./docs/assets/architecture.svg" alt="fastapi-proxykit architecture" width="900" />
   <!-- Replace with real diagram (Excalidraw recommended) -->
 </div>
 ## ✨ Features
